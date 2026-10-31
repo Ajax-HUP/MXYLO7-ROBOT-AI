@@ -17,7 +17,16 @@
 <div class="card"><div class="row"><h3 style="margin:0">Demo activity</h3><span class="tag">SIMULATED</span></div><div class="row" style="margin-top:14px"><span class="muted">Paper entries</span><b class="big" id="tradeCount">0</b></div><div id="activity" class="muted" style="font-size:13px;margin-top:8px">No demo entries yet.</div></div>
 </section>
 <section id="signals" class="view"><div class="row"><div><div class="eyebrow">SAMPLE MARKET IDEAS</div><h2 style="margin:5px 0">Signals</h2></div><span class="tag">EXAMPLES</span></div><div class="notice">These are fixed sample signals for learning—not live analysis or predictions.</div><div class="card" id="signalList"></div></section>
-<section id="assistant" class="view"><div class="eyebrow">YOUR FOREX LEARNING ASSISTANT</div><h2 style="margin:5px 0">FR3DDY AI Assistance</h2><p class="muted">Ask a question and get a simple explanation.</p><div class="chat" id="chat"><div class="bubble"><b>FR3DDY AI</b><br>What's good! I'm FR3DDY. Ask me about forex basics, signals, RSI, MACD, or risk management.</div></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin:10px 0"><button class="tab" data-question="What is RSI?">RSI</button><button class="tab" data-question="What is MACD?">MACD</button><button class="tab" data-question="What does BUY, SELL and WAIT mean?">Signals</button><button class="tab" data-question="Explain risk management simply">Risk basics</button></div><form class="chatform" id="chatForm"><input class="field" id="chatInput" placeholder="Ask FR3DDY anything…" autocomplete="off" required><button class="btn primary">Send</button></form></section>
+<section id="assistant" class="view"><div class="eyebrow">YOUR FOREX LEARNING ASSISTANT</div><h2 style="margin:5px 0">FR3DDY AI Assistance</h2><p class="muted">Ask a question and get a simple explanation.</p><div class="card" id="accountCard">
+  <div class="row"><b>FR3DDY AI account</b><span class="tag" id="accountState">SIGNED OUT</span></div>
+  <p class="tiny" id="accountMessage">Sign in to use the Premium AI assistant once the service is configured.</p>
+  <form id="accountForm" style="display:grid;gap:8px">
+    <input class="field" id="accountEmail" type="email" placeholder="Email address" autocomplete="email" required>
+    <input class="field" id="accountPassword" type="password" placeholder="Password" autocomplete="current-password" minlength="8" required>
+    <div class="row"><button class="btn primary" type="submit" id="loginBtn">Sign in</button><button class="btn" type="button" id="signupBtn">Create account</button><button class="btn stop" type="button" id="logoutBtn" hidden>Sign out</button></div>
+  </form>
+</div>
+<div class="chat" id="chat"><div class="bubble"><b>FR3DDY AI</b><br>What's good! I'm FR3DDY. Ask me about forex basics, signals, RSI, MACD, or risk management.</div></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin:10px 0"><button class="tab" data-question="What is RSI?">RSI</button><button class="tab" data-question="What is MACD?">MACD</button><button class="tab" data-question="What does BUY, SELL and WAIT mean?">Signals</button><button class="tab" data-question="Explain risk management simply">Risk basics</button></div><form class="chatform" id="chatForm"><input class="field" id="chatInput" placeholder="Ask FR3DDY anything…" autocomplete="off" required><button class="btn primary">Send</button></form></section>
 <footer class="footer">MXYLO7 ROBOT AI · EDUCATIONAL DEMO · POWERED BY FR3DDY AI</footer></main>
 <script>
 const signals=[{pair:"EUR/USD",side:"BUY",score:84},{pair:"GBP/USD",side:"WAIT",score:61},{pair:"USD/JPY",side:"SELL",score:78},{pair:"AUD/USD",side:"BUY",score:81},{pair:"USD/CAD",side:"WAIT",score:58}];
@@ -39,4 +48,116 @@ function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;","
 function send(q){if(!q.trim())return;const a=answers.find(x=>x[0].test(q));const answer=a?a[1]:"I can explain forex basics, indicators, signals and risk management. Try asking me about RSI, MACD, BUY/SELL/WAIT, support or resistance.";const c=$("chat");c.innerHTML+='<div class="bubble user">'+escapeHTML(q)+'</div><div class="bubble"><b>FR3DDY AI</b><br>'+answer+'</div>';$("chatInput").value="";c.scrollTop=c.scrollHeight;}
 $("chatForm").addEventListener("submit",e=>{e.preventDefault();send($("chatInput").value);});
 document.querySelectorAll("[data-question]").forEach(b=>b.addEventListener("click",()=>send(b.dataset.question)));
-</script></body></html>
+</script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./auth-config.js";
+
+const WORKER_URL = ""; // Add the deployed Cloudflare Worker URL here after deployment.
+const accountMessage = document.getElementById("accountMessage");
+const accountState = document.getElementById("accountState");
+const accountForm = document.getElementById("accountForm");
+const logoutBtn = document.getElementById("logoutBtn");
+const chat = document.getElementById("chat");
+const input = document.getElementById("chatInput");
+const history = [];
+let supabase = null;
+let session = null;
+let busy = false;
+
+const ready = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+if (ready) {
+  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const { data } = await supabase.auth.getSession();
+  session = data.session;
+  supabase.auth.onAuthStateChange((_event, nextSession) => {
+    session = nextSession;
+    renderAccount();
+  });
+} else {
+  accountMessage.textContent = "Account setup is pending. Add your Supabase project URL and public anon key to auth-config.js. Never add a service-role key here.";
+}
+function renderAccount() {
+  accountState.textContent = session ? "SIGNED IN" : "SIGNED OUT";
+  accountMessage.textContent = session ? "Signed in as " + session.user.email + ". Premium access is checked securely by the backend." : "Sign in or create an account. Premium AI access requires an active membership.";
+  document.getElementById("loginBtn").hidden = Boolean(session);
+  document.getElementById("signupBtn").hidden = Boolean(session);
+  logoutBtn.hidden = !session;
+  document.getElementById("accountEmail").hidden = Boolean(session);
+  document.getElementById("accountPassword").hidden = Boolean(session);
+}
+renderAccount();
+
+accountForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!supabase) return alert("Supabase setup is not complete yet.");
+  const email = document.getElementById("accountEmail").value.trim();
+  const password = document.getElementById("accountPassword").value;
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  accountMessage.textContent = error ? error.message : "Signed in successfully.";
+});
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  if (!supabase) return alert("Supabase setup is not complete yet.");
+  const email = document.getElementById("accountEmail").value.trim();
+  const password = document.getElementById("accountPassword").value;
+  if (!email || password.length < 8) return alert("Enter a valid email and a password of at least 8 characters.");
+  const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + location.pathname } });
+  accountMessage.textContent = error ? error.message : "Account created. Check your email to confirm your address.";
+});
+logoutBtn.addEventListener("click", async () => {
+  if (supabase) await supabase.auth.signOut();
+});
+
+function addBubble(role, text) {
+  const bubble = document.createElement("div");
+  bubble.className = "bubble" + (role === "user" ? " user" : "");
+  if (role === "assistant") {
+    const label = document.createElement("b");
+    label.textContent = "FR3DDY AI";
+    bubble.append(label, document.createElement("br"));
+  }
+  bubble.append(document.createTextNode(text));
+  chat.append(bubble);
+  chat.scrollTop = chat.scrollHeight;
+}
+async function askFr3ddy(question) {
+  const q = question.trim();
+  if (!q || busy) return;
+  addBubble("user", q);
+  input.value = "";
+  if (!session) { addBubble("assistant", "Please sign in first. Premium AI access is available to approved Premium accounts."); return; }
+  if (!WORKER_URL) { addBubble("assistant", "The secure AI service has not been deployed yet. The sign-in interface is ready, but the project owner still needs to configure the backend URL."); return; }
+  busy = true;
+  const pending = document.createElement("div");
+  pending.className = "bubble";
+  pending.textContent = "FR3DDY is thinking…";
+  chat.append(pending);
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + session.access_token },
+      body: JSON.stringify({ messages: [...history, { role: "user", content: q }] })
+    });
+    const data = await response.json();
+    pending.remove();
+    if (!response.ok) throw new Error(data.error || "Request failed.");
+    history.push({ role: "user", content: q }, { role: "assistant", content: data.answer });
+    if (history.length > 24) history.splice(0, history.length - 24);
+    addBubble("assistant", data.answer);
+  } catch (error) {
+    pending.remove();
+    addBubble("assistant", error.message || "FR3DDY is temporarily unavailable.");
+  } finally { busy = false; }
+}
+document.getElementById("chatForm").addEventListener("submit", event => {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  askFr3ddy(input.value);
+}, true);
+document.querySelectorAll("[data-question]").forEach(button => {
+  button.addEventListener("click", event => {
+    event.stopImmediatePropagation();
+    askFr3ddy(button.dataset.question);
+  }, true);
+});
+</script>\n</body></html>
