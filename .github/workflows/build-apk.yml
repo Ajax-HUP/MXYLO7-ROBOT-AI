@@ -16,8 +16,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Accept Android SDK licences and install build packages
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
       - uses: gradle/actions/setup-gradle@v4
-      - uses: android-actions/setup-android@v3
       - name: Build debug APK
         run: gradle assembleDebug
       - name: Upload installable APK
