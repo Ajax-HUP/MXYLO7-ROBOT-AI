@@ -43,8 +43,16 @@ el("scanRows").innerHTML=sample.map(row).join("");
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.tab)));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
 function go(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.tab===id));window.scrollTo({top:0,behavior:"smooth"})}
-let running=false;function engine(v){running=v;el("engineState").textContent=v?"SIMULATING":"STANDBY";el("engineBtn").textContent=v?"Stop simulator":"Start simulator";el("demoToggle").checked=v}
+let running=false,paperCount=0,cycleIndex=0;
+function demoCycle(){
+ const eligible=sample.filter(x=>x.s!=="WAIT");
+ const pick=eligible[cycleIndex%eligible.length];cycleIndex++;
+ paperCount++;el("paperCount").textContent=paperCount;
+ el("paperStatus").textContent="Paper entry #"+paperCount+": "+pick.s+" "+pick.p+" · sample signal only. No real order or profit/loss recorded.";
+}
+function engine(v){running=v;el("engineState").textContent=v?"ON · DEMO":"OFF";el("engineBtn").textContent=v?"Stop demo auto-trader":"Start demo auto-trader";el("demoToggle").checked=v;el("paperStatus").textContent=v?"Demo auto-trader is on. Use Run one demo cycle to record a paper entry.":"Auto-trader is off. No positions are open."}
 el("engineBtn").onclick=()=>engine(!running);el("demoToggle").onchange=e=>engine(e.target.checked);
+el("demoCycleBtn").onclick=()=>{if(!running){el("paperStatus").textContent="Switch on the demo auto-trader first.";return;}demoCycle();};
 el("scanBtn").onclick=()=>{const on=el("scanBtn").textContent==="Start scan";el("scanBtn").textContent=on?"Pause scan":"Start scan";el("scanStatus").textContent=on?"Running · sample watchlist":"Paused · sample watchlist"};
 const answers=[
 [/\brsi\b/i,"RSI means Relative Strength Index. It is a momentum indicator usually displayed from 0 to 100. Traders often study readings above 70 or below 30, but those levels are not automatic sell or buy instructions. Context matters."],
