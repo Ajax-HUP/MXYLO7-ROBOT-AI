@@ -1,4 +1,4 @@
-name: Build MXYLO7 Android APK
+name: Build MXYLO7 Android APK # Android debug APK build
 on:
   workflow_dispatch:
   push:
