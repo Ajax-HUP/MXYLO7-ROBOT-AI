@@ -53,7 +53,7 @@ document.querySelectorAll("[data-question]").forEach(b=>b.addEventListener("clic
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./auth-config.js";
 
-const WORKER_URL = ""; // Add the deployed Cloudflare Worker URL here after deployment.
+const WORKER_URL = "https://wandering-snowflake-224e.freddyrisenga.workers.dev/";
 const accountMessage = document.getElementById("accountMessage");
 const accountState = document.getElementById("accountState");
 const accountForm = document.getElementById("accountForm");
