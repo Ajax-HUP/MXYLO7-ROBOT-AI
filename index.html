@@ -7,7 +7,23 @@
 <style>
 :root{--navy:#081A2B;--blue:#102D45;--cyan:#50D9FF;--white:#fff;--red:#EF4444;--muted:#91A9BA;--line:#24445b;--green:#49d6a0}
 *{box-sizing:border-box}body{margin:0;background:var(--navy);color:var(--white);font:15px/1.5 system-ui,sans-serif}.app{max-width:850px;margin:auto;padding:18px 14px 60px}.top,.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.top{margin-bottom:22px}.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;border:1px solid var(--cyan);border-radius:12px;display:grid;place-items:center;color:var(--cyan);font-weight:900}.brand h1{font-size:16px;margin:0;letter-spacing:1px}.brand small,.tiny{font-size:11px;color:var(--muted)}.status,.tag{font-size:10px;padding:5px 9px;border-radius:30px;background:#173e52;color:var(--cyan);font-weight:800}.hero,.card{background:linear-gradient(130deg,#102d45,#0d2438);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--cyan);font-weight:800}.hero h2{font-size:clamp(27px,7vw,40px);line-height:1.1;margin:9px 0}.hero p,.muted{color:#b4c7d4}.notice{background:#182e40;border:1px solid #38566c;border-radius:12px;padding:10px 12px;color:#c4d4df;font-size:12px;margin:14px 0}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:18px 0}.tab,.btn{border:1px solid var(--line);border-radius:11px;padding:11px 9px;background:#102d45;color:white;font:inherit;font-weight:750}.tab.active,.btn.primary{background:var(--cyan);border-color:var(--cyan);color:#061827}.view{display:none}.view.active{display:block}.btn{cursor:pointer}.btn.stop{background:#321e2a;color:#ff9292;border-color:#78343b}.big{font-size:28px;font-weight:850}.pair{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid #1d394e}.pair:last-child{border:0}.buy{color:var(--green)}.sell{color:#ff8585}.wait{color:#f2cf77}.chat{height:310px;overflow:auto;background:#081a2b;border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0}.bubble{background:#15354d;padding:10px 12px;border-radius:12px;margin:8px 0;max-width:92%}.bubble.user{margin-left:auto;background:#174b65}.field{width:100%;min-width:0;background:#081a2b;border:1px solid var(--line);border-radius:10px;padding:12px;color:white;font:inherit}.password-wrap{position:relative}.password-wrap .field{padding-right:48px}.eye-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--cyan);font-size:18px;padding:7px;cursor:pointer}.chatform{display:flex;gap:8px}.chatform button{white-space:nowrap}.footer{text-align:center;color:#6f899b;font-size:11px;padding:20px}@media(max-width:430px){.tab{font-size:12px}.pair{gap:6px}}
-</style></head><body><main class="app">
+
+/* MXYLO7 branded startup screen */
+#bootScreen{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#10263b 0%,#080b12 58%,#05070b 100%);transition:opacity .55s ease,visibility .55s ease}
+#bootScreen::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(80,217,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(80,217,255,.045) 1px,transparent 1px);background-size:42px 42px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 75%)}
+#bootScreen.boot-hidden{opacity:0;visibility:hidden;pointer-events:none}
+.boot-content{position:relative;z-index:1;width:min(82vw,360px);text-align:center}
+.boot-logo{width:112px;height:112px;object-fit:cover;border-radius:26px;border:1px solid rgba(128,221,255,.45);box-shadow:0 0 34px rgba(55,185,255,.22);animation:bootReveal 1s ease both}
+.boot-name{margin:23px 0 4px;font-size:clamp(25px,7vw,34px);font-weight:900;letter-spacing:4px;color:#f2f7fb;text-shadow:0 0 24px rgba(80,217,255,.18)}
+.boot-tagline{font-size:10px;letter-spacing:2.6px;color:#65dfff;font-weight:800}
+.boot-track{height:3px;background:#1c3448;border-radius:9px;overflow:hidden;margin:34px 0 13px}
+.boot-progress{height:100%;width:35%;border-radius:9px;background:linear-gradient(90deg,#258bbd,#72e6ff);box-shadow:0 0 14px #50d9ff;animation:bootLoad 1.65s ease-in-out forwards}
+.boot-status{min-height:16px;font-size:10px;letter-spacing:1.8px;color:#8caabd}
+.boot-version{margin-top:46px;font-size:9px;letter-spacing:2px;color:#506a7d}
+@keyframes bootLoad{to{width:100%}}@keyframes bootReveal{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){#bootScreen{transition:none}.boot-logo,.boot-progress{animation:none}.boot-progress{width:100%}}
+
+</style></head><body><div id="bootScreen" role="status" aria-label="Loading MXYLO7 ROBOT AI"><div class="boot-content"><img class="boot-logo" src="./mxylo7-app-icon.jpg" alt="MXYLO7 app logo"><div class="boot-name">MXYLO7</div><div class="boot-tagline">INTELLIGENCE. PRECISION. CONTROL.</div><div class="boot-track"><div class="boot-progress"></div></div><div class="boot-status" id="bootStatus">INITIALISING AI SYSTEMS...</div><div class="boot-version">ROBOT AI · VERSION 1.0.0</div></div></div><main class="app">
 <header class="top"><div class="brand"><div class="logo">M7</div><div><h1>MXYLO7 ROBOT AI</h1><small>POWERED BY FR3DDY AI</small></div></div><span class="status">● DEMO MODE</span></header>
 <section class="hero"><div class="eyebrow">WELCOME TO MXYLO7</div><h2>Trade smarter.<br><span style="color:var(--cyan)">Learn with FR3DDY.</span></h2><p>Your simple forex learning dashboard: check sample signals, ask FR3DDY AI, or start the demo auto-trader.</p></section>
 <div class="notice">Educational demo only. Signals are examples, and Auto Trading simulates paper entries only. It does not connect to a broker, use real money, or place live orders.</div>
@@ -277,5 +293,30 @@ document.querySelectorAll("[data-question]").forEach(button => {
     askFr3ddy(button.dataset.question);
   }, true);
 });
+</script>
+
+<script>
+(() => {
+  const screen = document.getElementById("bootScreen");
+  const status = document.getElementById("bootStatus");
+  if (!screen) return;
+  const messages = ["INITIALISING AI SYSTEMS...", "PREPARING YOUR DASHBOARD...", "CONNECTING MARKET DATA..."];
+  let index = 0;
+  const messageTimer = window.setInterval(() => {
+    index = (index + 1) % messages.length;
+    if (status) status.textContent = messages[index];
+  }, 650);
+  const started = Date.now();
+  const dismiss = () => {
+    const wait = Math.max(0, 1650 - (Date.now() - started));
+    window.setTimeout(() => {
+      screen.classList.add("boot-hidden");
+      window.setTimeout(() => screen.remove(), 650);
+      window.clearInterval(messageTimer);
+    }, wait);
+  };
+  if (document.readyState === "complete") dismiss();
+  else window.addEventListener("load", dismiss, { once: true });
+})();
 </script>
 </body></html>
