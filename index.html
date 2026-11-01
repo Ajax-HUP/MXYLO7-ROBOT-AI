@@ -15,6 +15,19 @@
 <section id="auto" class="view active">
 <div class="card"><div class="eyebrow">FR3DDY ROBOT ENGINE</div><div class="row" style="margin:8px 0 14px"><div><div class="tiny">ENGINE STATUS</div><div class="big" id="engineState">STOPPED</div></div><span class="tag">PAPER MODE</span></div><button class="btn primary" id="startBtn" style="width:100%;padding:15px">▶ START AUTO TRADING</button><p class="tiny" id="engineMessage" style="margin-bottom:0">Press Start to begin a demo simulation. Press Stop at any time.</p></div>
 <div class="card"><div class="row"><h3 style="margin:0">Demo activity</h3><span class="tag">SIMULATED</span></div><div class="row" style="margin-top:14px"><span class="muted">Paper entries</span><b class="big" id="tradeCount">0</b></div><div id="activity" class="muted" style="font-size:13px;margin-top:8px">No demo entries yet.</div></div>
+<div class="card" id="demoAccount">
+  <div class="row"><div><div class="eyebrow">VIRTUAL PRACTICE ACCOUNT</div><h3 style="margin:5px 0">Demo account</h3></div><span class="tag">NO REAL FUNDS</span></div>
+  <div class="tiny" style="margin-top:12px">Starting virtual balance</div>
+  <div class="big" id="demoBalance">$10,000.00</div>
+  <div class="row" style="margin-top:14px;gap:8px">
+    <div><div class="tiny">Practice result</div><b id="demoPnl">$0.00</b></div>
+    <div><div class="tiny">Scenarios completed</div><b id="demoScenarios">0</b></div>
+  </div>
+  <div class="notice">Practice scenarios use fictional outcomes to teach how gains and losses affect a virtual balance. They do not predict markets or recommend trades.</div>
+  <button class="btn" id="runScenario" type="button" style="width:100%">Run learning scenario</button>
+  <button class="btn" id="resetDemo" type="button" style="width:100%;margin-top:8px">Reset virtual account</button>
+  <div class="tiny" id="scenarioMessage" style="margin-top:10px" aria-live="polite">No scenarios completed yet.</div>
+</div>
 </section>
 <section id="signals" class="view"><div class="row"><div><div class="eyebrow">LIVE MARKET DATA</div><h2 style="margin:5px 0">Forex Watch</h2></div><span class="tag" id="marketStatus">CONNECTING</span></div><div class="notice">Live reference prices for learning only. Price movements describe changes between refreshes; they are not BUY/SELL signals or trading recommendations.</div><div class="row" style="margin:10px 0 14px"><span class="tiny" id="marketUpdated">Waiting for market data…</span><button class="btn" id="refreshMarket" type="button">↻ Refresh</button></div><div class="card" id="signalList"><p class="muted">Connecting to the market data service…</p></div><p class="tiny">Source: Twelve Data. Quotes may be delayed or unavailable. This dashboard is educational and does not place trades.</p></section>
 <section id="assistant" class="view"><div class="eyebrow">YOUR FOREX LEARNING ASSISTANT</div><h2 style="margin:5px 0">FR3DDY AI Assistance</h2><p class="muted">Ask a question and get a simple explanation.</p>
@@ -56,9 +69,34 @@ refreshMarket();
 setInterval(refreshMarket,300000);
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab[data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===b.dataset.tab));}));
 let running=false,count=0,cycle=0,timer=null;
-function paperTrade(){const choices=signals.filter(s=>s.side!=="WAIT");const s=choices[cycle++%choices.length];count++;$("tradeCount").textContent=count;$("activity").textContent="Demo entry #"+count+": "+s.side+" "+s.pair+". Paper simulation only — no real order placed.";}
+function paperTrade(){count++;$("tradeCount").textContent=count;$("activity").textContent="Practice session #"+count+" recorded. No market order or broker connection was used.";}
 function setRunning(on){running=on;$("engineState").textContent=on?"RUNNING · DEMO":"STOPPED";$("startBtn").textContent=on?"■ STOP AUTO TRADING":"▶ START AUTO TRADING";$("startBtn").classList.toggle("stop",on);$("engineMessage").textContent=on?"Demo engine is running and recording simulated entries. No real funds or broker are involved.":"Demo engine stopped. You can start another practice session any time.";if(timer)clearInterval(timer);timer=null;if(on){paperTrade();timer=setInterval(paperTrade,10000);}}
 $("startBtn").addEventListener("click",()=>setRunning(!running));
+let demoBalance=10000;
+let demoPnl=0;
+let demoScenarios=0;
+const practiceOutcomes=[12,-8,5,-4,9];
+function renderDemo(){
+  $("demoBalance").textContent="$"+demoBalance.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  $("demoPnl").textContent=(demoPnl<0?"-":"") +"$"+Math.abs(demoPnl).toFixed(2);
+  $("demoPnl").className=demoPnl<0?"sell":"buy";
+  $("demoScenarios").textContent=demoScenarios;
+}
+$("runScenario").addEventListener("click",()=>{
+  const result=practiceOutcomes[demoScenarios%practiceOutcomes.length];
+  demoBalance+=result;
+  demoPnl+=result;
+  demoScenarios++;
+  renderDemo();
+  $("scenarioMessage").textContent="Example "+demoScenarios+": a fictional "+(result>=0?"gain of $":"loss of $")+Math.abs(result).toFixed(2)+". This is a learning example, not a market forecast.";
+});
+$("resetDemo").addEventListener("click",()=>{
+  demoBalance=10000;demoPnl=0;demoScenarios=0;
+  renderDemo();
+  $("scenarioMessage").textContent="Virtual account reset to $10,000.00.";
+});
+renderDemo();
+
 const answers=[
 [/\brsi\b/i,"RSI means Relative Strength Index. It is a momentum indicator from 0 to 100. Some traders study readings above 70 or below 30, but these are not automatic BUY or SELL instructions."],
 [/\bmacd\b/i,"MACD compares moving averages to help study momentum and trend changes. It can lag, so learners should never treat it as a guaranteed signal."],
