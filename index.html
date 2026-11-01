@@ -17,7 +17,7 @@
 .boot-name{margin:23px 0 4px;font-size:clamp(25px,7vw,34px);font-weight:900;letter-spacing:4px;color:#f2f7fb;text-shadow:0 0 24px rgba(80,217,255,.18)}
 .boot-tagline{font-size:10px;letter-spacing:2.6px;color:#65dfff;font-weight:800}
 .boot-track{height:3px;background:#1c3448;border-radius:9px;overflow:hidden;margin:34px 0 13px}
-.boot-progress{height:100%;width:35%;border-radius:9px;background:linear-gradient(90deg,#258bbd,#72e6ff);box-shadow:0 0 14px #50d9ff;animation:bootLoad 1.65s ease-in-out forwards}
+.boot-progress{height:100%;width:35%;border-radius:9px;background:linear-gradient(90deg,#258bbd,#72e6ff);box-shadow:0 0 14px #50d9ff;animation:bootLoad 5s ease-in-out forwards}
 .boot-status{min-height:16px;font-size:10px;letter-spacing:1.8px;color:#8caabd}
 .boot-version{margin-top:46px;font-size:9px;letter-spacing:2px;color:#506a7d}
 @keyframes bootLoad{to{width:100%}}@keyframes bootReveal{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -308,7 +308,7 @@ document.querySelectorAll("[data-question]").forEach(button => {
   }, 650);
   const started = Date.now();
   const dismiss = () => {
-    const wait = Math.max(0, 1650 - (Date.now() - started));
+    const wait = Math.max(0, 5000 - (Date.now() - started));
     window.setTimeout(() => {
       screen.classList.add("boot-hidden");
       window.setTimeout(() => screen.remove(), 650);
