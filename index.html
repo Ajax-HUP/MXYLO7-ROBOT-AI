@@ -75,7 +75,7 @@ function renderMarket(data){lastMarketUpdateAt=data.fetchedAt||Date.now();const 
 async function refreshMarket(){const button=$("refreshMarket");button.disabled=true;$("marketStatus").textContent="UPDATING";try{const response=await fetch("https://wandering-snowflake-224e.freddyrisenga.workers.dev/?route=market",{method:"GET",headers:{Accept:"application/json"},cache:"no-store"});const data=await response.json();if(!response.ok)throw new Error(data.error||"Market data unavailable.");renderMarket(data);}catch(error){$("marketStatus").textContent="UNAVAILABLE";$("marketUpdated").textContent=error.message;$("signalList").innerHTML='<p class="muted">Live quotes are not available right now. Check the service configuration and try again later.</p>';}finally{button.disabled=false;}}
 $("refreshMarket").addEventListener("click",refreshMarket);
 refreshMarket();
-setInterval(refreshMarket,300000);
+setInterval(refreshMarket,30000);
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab[data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===b.dataset.tab));}));
 let running=false,closedCount=0,realisedPnl=0;
 const virtualPositions={};
