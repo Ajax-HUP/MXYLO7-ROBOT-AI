@@ -101,7 +101,6 @@ function closeVirtual(pair,reason,price){
   $("activity").textContent=pair+" virtual "+p.side+" closed: "+money(pnl)+" ("+reason+").";
 }
 function evaluateVirtualRobot(quotes){
-  if(!running)return;
   let events=0;
   for(const q of quotes||[]){
     const price=Number(q.price);if(!Number.isFinite(price)||price<=0)continue;
@@ -112,18 +111,18 @@ function evaluateVirtualRobot(quotes){
       const pnl=positionPnl(p,price);
       if(pnl>=TAKE_PROFIT)closeVirtual(pair,"virtual target reached",price);
       else if(pnl<=-STOP_LOSS)closeVirtual(pair,"virtual loss limit reached",price);
-      else if(p.updates>=MAX_UPDATES)closeVirtual(pair,"maximum update count",price);
+      else if(!p.manual&&p.updates>=MAX_UPDATES)closeVirtual(pair,"maximum update count",price);
       events++;
-    }else if(old&&old>0){
+    }else if(running&&old&&old>0){
       const move=(price-old)/old*100;
       if(Math.abs(move)>=ENTRY_MOVE_PCT){
-        virtualPositions[pair]={pair,side:move>0?"BUY":"SELL",entry:price,last:price,updates:0};
+        virtualPositions[pair]={pair,side:move>0?"BUY":"SELL",entry:price,last:price,updates:0,manual:false};
         $("activity").textContent="Opened virtual "+(move>0?"BUY":"SELL")+" position on "+pair+" after a "+Math.abs(move).toFixed(3)+"% observed price change.";
         events++;
       }
     }
   }
-  if(events)$("accountMessage").textContent="Updated from a new market quote. Virtual positions only.";
+  if(events)$("accountMessage").textContent="Open virtual positions refreshed from the latest market quotes.";
   renderSimulator();
 }
 function openManualVirtual(side){
