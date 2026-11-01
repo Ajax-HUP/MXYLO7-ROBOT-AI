@@ -61,6 +61,7 @@ document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()
 let running=false,closedCount=0,realisedPnl=0;
 const virtualPositions={};
 const virtualHistory=[];
+const robotLastPrices={};
 const VIRTUAL_SIZE=1000, TAKE_PROFIT=5, STOP_LOSS=5, MAX_UPDATES=4, ENTRY_MOVE_PCT=0.01;
 function money(n){return (n<0?"-":"")+"$"+Math.abs(n).toFixed(2);}
 function positionPnl(p,price){return (p.side==="BUY"?1:-1)*((price-p.entry)/p.entry)*VIRTUAL_SIZE;}
@@ -86,7 +87,8 @@ function evaluateVirtualRobot(quotes){
   let events=0;
   for(const q of quotes||[]){
     const price=Number(q.price);if(!Number.isFinite(price)||price<=0)continue;
-    const pair=q.pair,p=virtualPositions[pair],old=previousPrices[pair];
+    const pair=q.pair,p=virtualPositions[pair],old=robotLastPrices[pair];
+    robotLastPrices[pair]=price;
     if(p){
       p.last=price;p.updates++;
       const pnl=positionPnl(p,price);
