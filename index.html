@@ -23,6 +23,32 @@
 @keyframes bootLoad{to{width:100%}}@keyframes bootReveal{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){#bootScreen{transition:none}.boot-logo,.boot-progress{animation:none}.boot-progress{width:100%}}
 
+
+/* MXYLO7 dark futuristic theme */
+:root{--navy:#080D18;--blue:#111B2B;--cyan:#00D7FF;--white:#F4F7FF;--red:#F04455;--muted:#9BA9BF;--line:#26364B;--green:#00D68F}
+body{background:radial-gradient(ellipse at 50% -15%,#14243A 0%,#080D18 58%);color:var(--white)}
+.hero,.card{background:linear-gradient(145deg,#111B2B,#0D1625);border-color:#26364B;box-shadow:0 8px 26px rgba(0,0,0,.16)}
+.hero p,.muted{color:#A8B5C9}
+.notice{background:#121F30;border-color:#2B4058;color:#C2CDDD}
+.status,.tag{background:rgba(0,215,255,.11);color:#00D7FF}
+.tab,.btn{background:#111B2B;border-color:#2B3B52;color:#F4F7FF}
+.tab.active,.btn.primary{background:#00D7FF;border-color:#00D7FF;color:#06121D;box-shadow:0 4px 16px rgba(0,215,255,.16)}
+.btn.stop{background:#301B29;color:#FF929D;border-color:#713344}
+.pair{border-bottom-color:#26364B}
+.chat,.field{background:#090F1B;border-color:#2B3B52;color:#F4F7FF}
+.bubble{background:#17263A}
+.bubble.user{background:#123B50}
+.logo{border-color:#00D7FF;color:#00D7FF;box-shadow:0 0 18px rgba(0,215,255,.12)}
+.footer{color:#71819A}
+#bootScreen{background:radial-gradient(ellipse at 50% 42%,#14243A 0%,#080D18 58%,#050810 100%)}
+#bootScreen::before{background-image:linear-gradient(rgba(0,215,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,215,255,.045) 1px,transparent 1px)}
+.boot-logo{border-color:rgba(0,215,255,.45);box-shadow:0 0 34px rgba(0,215,255,.18)}
+.boot-name{color:#F4F7FF;text-shadow:0 0 24px rgba(0,215,255,.16)}
+.boot-tagline{color:#00D7FF}
+.boot-track{background:#1B2A3E}
+.boot-progress{background:linear-gradient(90deg,#008FB8,#00D7FF);box-shadow:0 0 14px #00D7FF}
+.boot-status{color:#9BA9BF}
+.boot-version{color:#667791}
 </style></head><body><div id="bootScreen" role="status" aria-label="Loading MXYLO7 ROBOT AI"><div class="boot-content"><img class="boot-logo" src="./mxylo7-app-icon.jpg" alt="MXYLO7 app logo"><div class="boot-name">MXYLO7</div><div class="boot-tagline">INTELLIGENCE. PRECISION. CONTROL.</div><div class="boot-track"><div class="boot-progress"></div></div><div class="boot-status" id="bootStatus">INITIALISING AI SYSTEMS...</div><div class="boot-version">ROBOT AI · VERSION 1.0.0</div></div></div><main class="app">
 <header class="top"><div class="brand"><div class="logo">M7</div><div><h1>MXYLO7 ROBOT AI</h1><small>POWERED BY FR3DDY AI</small></div></div><span class="status">● DEMO MODE</span></header>
 <section class="hero"><div class="eyebrow">WELCOME TO MXYLO7</div><h2>Trade smarter.<br><span style="color:var(--cyan)">Learn with FR3DDY.</span></h2><p>Your simple forex learning dashboard: check sample signals, ask FR3DDY AI, or start the demo auto-trader.</p></section>
