@@ -1,6 +1,6 @@
 const cors = (origin) => ({
   "Access-Control-Allow-Origin": origin,
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Vary": "Origin"
 });
@@ -12,6 +12,35 @@ export default {
     if (!allowed.includes(origin)) return new Response("Origin not allowed", { status: 403 });
     const headers = cors(origin);
     if (request.method === "OPTIONS") return new Response(null, { headers });
+
+    // Public, read-only educational quote endpoint. Symbols are allow-listed.
+    const url = new URL(request.url);
+    if (request.method === "GET" && url.searchParams.get("route") === "market") {
+      if (!env.TWELVE_DATA_API_KEY) {
+        return Response.json({ error: "Market data provider is not configured yet." }, { status: 503, headers });
+      }
+      const pairs = ["EUR/USD", "GBP/USD", "USD/JPY", "AUD/USD", "USD/CAD"];
+      try {
+        const quotes = await Promise.all(pairs.map(async pair => {
+          const endpoint = "https://api.twelvedata.com/exchange_rate?symbol=" +
+            encodeURIComponent(pair) + "&apikey=" + encodeURIComponent(env.TWELVE_DATA_API_KEY);
+          const response = await fetch(endpoint);
+          const data = await response.json();
+          const price = Number(data.rate);
+          if (!response.ok || !Number.isFinite(price) || price <= 0) {
+            throw new Error("A market quote could not be retrieved.");
+          }
+          return { pair, price, timestamp: Number(data.timestamp) || null };
+        }));
+        return Response.json({
+          source: "Twelve Data",
+          fetchedAt: new Date().toISOString(),
+          quotes
+        }, { headers: { ...headers, "Cache-Control": "public, max-age=60" } });
+      } catch (_error) {
+        return Response.json({ error: "Live market data is temporarily unavailable. Please try again later." }, { status: 502, headers });
+      }
+    }
     if (request.method !== "POST") return Response.json({ error: "Method not allowed" }, { status: 405, headers });
 
     try {
