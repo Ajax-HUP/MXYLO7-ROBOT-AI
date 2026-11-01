@@ -49,6 +49,19 @@ body{background:radial-gradient(ellipse at 50% -15%,#14243A 0%,#080D18 58%);colo
 .boot-progress{background:linear-gradient(90deg,#008FB8,#00D7FF);box-shadow:0 0 14px #00D7FF}
 .boot-status{color:#9BA9BF}
 .boot-version{color:#667791}
+
+/* Subtle violet accents */
+:root{--purple:#9B7BFF;--purple-soft:#B9A5FF}
+.eyebrow{color:var(--purple-soft)}
+.logo{border-color:var(--purple);color:var(--purple);box-shadow:0 0 18px rgba(155,123,255,.16)}
+.status,.tag{background:rgba(155,123,255,.12);color:var(--purple-soft)}
+.tab.active,.btn.primary{background:linear-gradient(110deg,#00D7FF 0%,#8D73FF 100%);border-color:#8D73FF;color:#07111D;box-shadow:0 4px 18px rgba(141,115,255,.18)}
+.hero{background:radial-gradient(ellipse at 100% 0%,rgba(115,83,205,.13),transparent 48%),linear-gradient(145deg,#111B2B,#0D1625)}
+.card{background:linear-gradient(145deg,rgba(155,123,255,.045),transparent 48%),linear-gradient(145deg,#111B2B,#0D1625)}
+.field:focus{outline:1px solid var(--purple);border-color:var(--purple)}
+.boot-tagline{color:var(--purple-soft)}
+.boot-progress{background:linear-gradient(90deg,#00AFCF,#9B7BFF);box-shadow:0 0 14px rgba(155,123,255,.8)}
+.boot-logo{box-shadow:0 0 34px rgba(155,123,255,.22)}
 </style></head><body><div id="bootScreen" role="status" aria-label="Loading MXYLO7 ROBOT AI"><div class="boot-content"><img class="boot-logo" src="./mxylo7-app-icon.jpg" alt="MXYLO7 app logo"><div class="boot-name">MXYLO7</div><div class="boot-tagline">INTELLIGENCE. PRECISION. CONTROL.</div><div class="boot-track"><div class="boot-progress"></div></div><div class="boot-status" id="bootStatus">INITIALISING AI SYSTEMS...</div><div class="boot-version">ROBOT AI · VERSION 1.0.0</div></div></div><main class="app">
 <header class="top"><div class="brand"><div class="logo">M7</div><div><h1>MXYLO7 ROBOT AI</h1><small>POWERED BY FR3DDY AI</small></div></div><span class="status">● DEMO MODE</span></header>
 <section class="hero"><div class="eyebrow">WELCOME TO MXYLO7</div><h2>Trade smarter.<br><span style="color:var(--cyan)">Learn with FR3DDY.</span></h2><p>Your simple forex learning dashboard: check sample signals, ask FR3DDY AI, or start the demo auto-trader.</p></section>
