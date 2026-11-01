@@ -70,7 +70,8 @@ const pairs=["EUR/USD","GBP/USD","USD/JPY","AUD/USD","USD/CAD"];
 const $=id=>document.getElementById(id);
 let previousPrices={};
 const latestPrices={};
-function renderMarket(data){const rows=(data.quotes||[]).map(q=>{const price=Number(q.price);if(!Number.isFinite(price)||!pairs.includes(q.pair))return "";latestPrices[q.pair]=price;const old=previousPrices[q.pair];const change=old?((price-old)/old*100):null;const digits=q.pair.endsWith("JPY")?3:5;const movement=change===null?"—":(change>0?"+":"")+change.toFixed(3)+"%";const cls=change===null?"muted":change>0?"buy":change<0?"sell":"wait";previousPrices[q.pair]=price;return '<div class="pair"><div><b>'+q.pair+'</b><div class="tiny">'+(q.timestamp?new Date(q.timestamp*1000).toLocaleString():"Provider timestamp unavailable")+'</div></div><b style="font-variant-numeric:tabular-nums">'+price.toFixed(digits)+'</b><span class="tiny '+cls+'">'+movement+'</span></div>';}).join("");$("signalList").innerHTML=rows||'<p class="muted">No valid quotes returned. Try refreshing later.</p>';$("marketStatus").textContent="LIVE DATA";$("marketUpdated").textContent="Last checked: "+new Date(data.fetchedAt).toLocaleString();evaluateVirtualRobot(data.quotes||[]);}
+let lastMarketUpdateAt=null;
+function renderMarket(data){lastMarketUpdateAt=data.fetchedAt||Date.now();const rows=(data.quotes||[]).map(q=>{const price=Number(q.price);if(!Number.isFinite(price)||!pairs.includes(q.pair))return "";latestPrices[q.pair]=price;const old=previousPrices[q.pair];const change=old?((price-old)/old*100):null;const digits=q.pair.endsWith("JPY")?3:5;const movement=change===null?"—":(change>0?"+":"")+change.toFixed(3)+"%";const cls=change===null?"muted":change>0?"buy":change<0?"sell":"wait";previousPrices[q.pair]=price;return '<div class="pair"><div><b>'+q.pair+'</b><div class="tiny">'+(q.timestamp?new Date(q.timestamp*1000).toLocaleString():"Provider timestamp unavailable")+'</div></div><b style="font-variant-numeric:tabular-nums">'+price.toFixed(digits)+'</b><span class="tiny '+cls+'">'+movement+'</span></div>';}).join("");$("signalList").innerHTML=rows||'<p class="muted">No valid quotes returned. Try refreshing later.</p>';$("marketStatus").textContent="LIVE DATA";$("marketUpdated").textContent="Last checked: "+new Date(data.fetchedAt).toLocaleString();evaluateVirtualRobot(data.quotes||[]);}
 async function refreshMarket(){const button=$("refreshMarket");button.disabled=true;$("marketStatus").textContent="UPDATING";try{const response=await fetch("https://wandering-snowflake-224e.freddyrisenga.workers.dev/?route=market",{method:"GET",headers:{Accept:"application/json"},cache:"no-store"});const data=await response.json();if(!response.ok)throw new Error(data.error||"Market data unavailable.");renderMarket(data);}catch(error){$("marketStatus").textContent="UNAVAILABLE";$("marketUpdated").textContent=error.message;$("signalList").innerHTML='<p class="muted">Live quotes are not available right now. Check the service configuration and try again later.</p>';}finally{button.disabled=false;}}
 $("refreshMarket").addEventListener("click",refreshMarket);
 refreshMarket();
@@ -83,9 +84,16 @@ const robotLastPrices={};
 const VIRTUAL_SIZE=1000, TAKE_PROFIT=5, STOP_LOSS=5, MAX_UPDATES=4, ENTRY_MOVE_PCT=0.01;
 function money(n){return (n<0?"-":"")+"$"+Math.abs(n).toFixed(2);}
 function positionPnl(p,price){return (p.side==="BUY"?1:-1)*((price-p.entry)/p.entry)*VIRTUAL_SIZE;}
+function pipSize(pair){return pair.endsWith("JPY")?0.01:0.0001;}
 function renderSimulator(){
   let floating=0;
-  const openRows=Object.values(virtualPositions).map(p=>{const pnl=positionPnl(p,p.last);floating+=pnl;return '<div class="pair"><div><b>'+p.pair+' · '+p.side+'</b><div class="tiny">Entry '+p.entry+' · latest '+p.last+'</div><button class="btn" type="button" data-close="'+p.pair+'" style="margin-top:6px;padding:6px 10px">Close demo trade</button></div><b class="'+(pnl>=0?"buy":"sell")+'">'+money(pnl)+'</b></div>';}).join("");
+  const openRows=Object.values(virtualPositions).map(p=>{
+    const pnl=positionPnl(p,p.last);floating+=pnl;
+    const pips=(p.side==="BUY"?1:-1)*(p.last-p.entry)/pipSize(p.pair);
+    const digits=p.pair.endsWith("JPY")?3:5;
+    const updated=lastMarketUpdateAt?new Date(lastMarketUpdateAt).toLocaleTimeString():"Waiting for quote";
+    return '<div class="pair"><div><b>'+p.pair+' · '+p.side+'</b><div class="tiny">Entry '+p.entry.toFixed(digits)+' · latest '+p.last.toFixed(digits)+'</div><div class="tiny">Movement: <b class="'+(pips>=0?"buy":"sell")+'">'+(pips>0?"+":"")+pips.toFixed(1)+' pips</b> · Updated '+updated+'</div><button class="btn" type="button" data-close="'+p.pair+'" style="margin-top:6px;padding:6px 10px">Close demo trade</button></div><div style="text-align:right"><b class="'+(pnl>=0?"buy":"sell")+'">'+money(pnl)+'</b><div class="tiny">4 decimal view: '+(pnl<0?"-":"")+"$"+Math.abs(pnl).toFixed(4)+'</div></div></div>';
+  }).join("");
   $("openPositions").innerHTML=openRows||'<p class="muted">No open positions.</p>';
   $("tradeHistory").innerHTML=virtualHistory.length?virtualHistory.slice(0,8).map(h=>'<div class="pair"><div><b>'+h.pair+' · '+h.side+'</b><div class="tiny">'+h.reason+' · '+h.time+'</div></div><b class="'+(h.pnl>=0?"buy":"sell")+'">'+money(h.pnl)+'</b></div>').join(""):'<p class="muted">No completed demo trades yet.</p>';
   $("demoBalance").textContent=money(10000+realisedPnl+floating);
