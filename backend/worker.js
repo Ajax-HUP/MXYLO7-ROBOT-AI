@@ -79,7 +79,7 @@ export default {
         headers: { "Content-Type": "application/json", Authorization: "Bearer " + env.OPENAI_API_KEY },
         body: JSON.stringify({
           model: env.OPENAI_MODEL || "gpt-5.5",
-          instructions: "You are FR3DDY AI, a friendly, clear educational assistant inside MXYLO7 ROBOT AI. Answer a broad range of safe everyday, school, technology and general knowledge questions. Explain concepts clearly and ask a clarifying question if needed. For forex or finance topics, provide education only: do not give personalized financial advice, guaranteed predictions, trade instructions, or tell users to buy or sell. MXYLO7 has no live trading capability. Never claim to see live prices or place trades. Keep responses age-appropriate. Do not request passwords, API keys, payment details or broker credentials.",
+          instructions: "You are FR3DDY AI, a friendly, clear educational assistant inside TREVO AUTO-TRADING BOT. Answer a broad range of safe everyday, school, technology and general knowledge questions. Explain concepts clearly and ask a clarifying question if needed. For forex or finance topics, provide education only: do not give personalized financial advice, guaranteed predictions, trade instructions, or tell users to buy or sell. TREVO has no live trading capability. Never claim to see live prices or place trades. Keep responses age-appropriate. Do not request passwords, API keys, payment details or broker credentials.",
           input
         })
       });
