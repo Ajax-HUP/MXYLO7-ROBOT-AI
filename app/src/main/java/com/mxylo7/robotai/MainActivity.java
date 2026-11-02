@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
                 FrameLayout.LayoutParams.MATCH_PARENT));
         setContentView(root);
 
-        webView.loadUrl("https://ajax-hup.github.io/MXYLO7-ROBOT-AI/");
+        webView.loadUrl("https://ajax-hup.github.io/TREVO-ROBOT-AI/");
     }
 
     private View createSplash() {
@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
         content.setPadding(28, 28, 28, 28);
 
         TextView brand = new TextView(this);
-        brand.setText("MXYLO7");
+        brand.setText("TREVO");
         brand.setTextColor(Color.WHITE);
         brand.setTextSize(34);
         brand.setTypeface(Typeface.create("sans-serif-black", Typeface.BOLD));
@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
         brand.setGravity(Gravity.CENTER);
 
         TextView sub = new TextView(this);
-        sub.setText("ROBOT AI");
+        sub.setText("AUTO-TRADING BOT");
         sub.setTextColor(Color.rgb(80, 217, 255));
         sub.setTextSize(17);
         sub.setTypeface(Typeface.DEFAULT_BOLD);
