@@ -94,7 +94,7 @@ export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
     const allowed = (env.ALLOWED_ORIGIN || "").split(",").map(x => x.trim()).filter(Boolean);
-    if (!allowed.includes(origin)) return new Response("Origin not allowed", { status: 403 });
+    if (origin && !allowed.includes(origin)) return new Response("Origin not allowed", { status: 403 });
     const headers = cors(origin);
     if (request.method === "OPTIONS") return new Response(null, { headers });
     const url = new URL(request.url);
