@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
                 FrameLayout.LayoutParams.MATCH_PARENT));
         setContentView(root);
 
-        webView.loadUrl("https://ajax-hup.github.io/TREVO-ROBOT-AI/");
+        webView.loadUrl("https://ajax-hup.github.io/MXYLO7-ROBOT-AI/");
     }
 
     private View createSplash() {
