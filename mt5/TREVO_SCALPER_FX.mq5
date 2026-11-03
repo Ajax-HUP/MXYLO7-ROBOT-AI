@@ -11,6 +11,9 @@
 CTrade trade;
 
 input bool   EnableTrading          = false; // Explicit opt-in; OFF by default
+input string LicenseKey             = "";    // Customer licence key
+input string LicenseApiUrl           = "https://wandering-snowflake-224e.freddyrisenga.workers.dev/";
+input int    LicenseRecheckMinutes   = 60;
 input ulong  MagicNumber            = 6041104;
 input ENUM_TIMEFRAMES SignalTimeframe = PERIOD_M5;
 input int    FastEMA                = 9;
@@ -36,6 +39,8 @@ datetime lastBar = 0;
 int dayKey = -1;
 double dayStartEquity = 0.0;
 bool dailyStop = false;
+bool licenseValid = false;
+datetime lastLicenseCheck = 0;
 string lastAction = "Waiting for first closed candle";
 
 bool IsDemoAccount()
@@ -168,6 +173,7 @@ void TryEntry()
 {
    RefreshDailyGuard();
    if(!EnableTrading) { lastAction = "Trading disabled in EA inputs"; return; }
+   if(!licenseValid) { lastAction = "Blocked: valid online licence required"; return; }
    if(!IsDemoAccount()) { lastAction = "Blocked: demo account required"; return; }
    if(dailyStop) { lastAction = "Daily loss guard reached - entries blocked"; return; }
    if(!IsTradingHour()) { lastAction = "Outside configured trading hours"; return; }
