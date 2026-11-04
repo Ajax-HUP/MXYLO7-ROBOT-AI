@@ -128,43 +128,8 @@ export default {
         return json(result.body, result.status, headers);
       }
 
-      const auth = request.headers.get("Authorization") || "";
-      if (!auth.startsWith("Bearer ")) return json({ error: "Please sign in." }, 401, headers);
-      const token = auth.slice(7);
-      const userRes = await fetch(env.SUPABASE_URL + "/auth/v1/user", {
-        headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: "Bearer " + token }
-      });
-      if (!userRes.ok) return json({ error: "Your session is invalid. Please log in again." }, 401, headers);
-      const user = await userRes.json();
-      const membershipUrl = env.SUPABASE_URL + "/rest/v1/premium_memberships?user_id=eq." +
-        encodeURIComponent(user.id) + "&active=eq.true&select=user_id&limit=1";
-      const membershipRes = await fetch(membershipUrl, {
-        headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: "Bearer " + env.SUPABASE_SERVICE_ROLE_KEY }
-      });
-      if (!membershipRes.ok) throw new Error("Could not verify membership.");
-      const memberships = await membershipRes.json();
-      if (!memberships.length) return json({ error: "FR3DDY AI Advanced is a Premium feature." }, 403, headers);
-
-      const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
-      if (!messages.length || messages.some(m => !["user", "assistant"].includes(m.role) ||
-          typeof m.content !== "string" || m.content.length > 3000)) {
-        return json({ error: "Please send a valid message." }, 400, headers);
-      }
-      const aiRes = await fetch("https://api.openai.com/v1/responses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + env.OPENAI_API_KEY },
-        body: JSON.stringify({
-          model: env.OPENAI_MODEL || "gpt-5.5",
-          instructions: "You are FR3DDY AI inside TREVO SCALPER FX. Provide clear educational help. For forex topics, explain concepts and risks; do not promise profit or give personalised financial advice. Trevo's trading system is demo-only until explicitly approved and tested. Never request passwords, API keys, payment details or broker credentials.",
-          input: messages.map(m => ({ role: m.role, content: m.content }))
-        })
-      });
-      const result = await aiRes.json();
-      if (!aiRes.ok) return json({ error: "FR3DDY is temporarily unavailable." }, 502, headers);
-      const answer = result.output?.flatMap(item => item.content || []).filter(part => part.type === "output_text")
-        .map(part => part.text).join("\n") || "";
-      if (!answer) throw new Error("Empty AI response.");
-      return json({ answer }, 200, headers);
+      // FR3DDY AI endpoint removed by product decision. Market data and TREVO licence routes remain active.
+      return json({ error: "FR3DDY AI is disabled." }, 410, headers);
     } catch (_error) {
       return json({ error: "Something went wrong. Please try again later." }, 500, headers);
     }
