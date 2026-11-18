@@ -2,7 +2,7 @@ const root=document.getElementById("balancedBotRoot");
 if(root){
 root.innerHTML=`
 <div class="card">
- <div class="eyebrow">MXYLO7 AUTO TRADER · BALANCED SCALPING</div>
+ <div class="eyebrow">TREVOR SCALPER FX SIMULATOR · BALANCED SCALPING</div>
  <div class="row" style="margin:8px 0 12px"><div><div class="tiny">ENGINE STATUS</div><div class="big" id="btState">STOPPED</div></div><span class="tag">SIMULATION ONLY</span></div>
  <p class="muted">Rule-based demo engine. It studies incoming reference-price snapshots and opens virtual positions only. No broker connection or live execution exists.</p>
  <div class="notice">Data limitation: the current app supplies periodic spot quotes, not historical M5/M15 candles or bid/ask spreads. This prototype uses rolling quote observations as an educational indicator approximation; it must not be treated as a validated scalping strategy.</div>
