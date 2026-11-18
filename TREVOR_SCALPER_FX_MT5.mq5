@@ -222,8 +222,8 @@ void EvaluateEntry()
    if(!ReadValue(hFastEMA, 0, 1, fast) ||
       !ReadValue(hSlowEMA, 0, 1, slow) ||
       !ReadValue(hRSI, 0, 1, rsi) ||
-      !ReadValue(hMACD, 0, 0, macdNow) ||
-      !ReadValue(hMACD, 0, 1, macdPrev) ||
+      !ReadValue(hMACD, 0, 1, macdNow) ||
+      !ReadValue(hMACD, 0, 2, macdPrev) ||
       !ReadValue(hATR, 0, 1, atr))
       return;
 
@@ -234,8 +234,10 @@ void EvaluateEntry()
    MqlTick tick;
    if(!SymbolInfoTick(_Symbol, tick)) return;
 
+   double point = SymbolInfoDouble(_Symbol, SYMBOL_POINT);
+   double brokerStopDistance = (double)SymbolInfoInteger(_Symbol, SYMBOL_TRADE_STOPS_LEVEL) * point;
    double stopDistance = MathMax(atr * InpATRStopMultiplier,
-                                 SymbolInfoDouble(_Symbol, SYMBOL_POINT) * 10.0);
+                                 MathMax(point * 10.0, brokerStopDistance));
    int digits = (int)SymbolInfoInteger(_Symbol, SYMBOL_DIGITS);
    double entry = buySignal ? tick.ask : tick.bid;
    double sl = buySignal ? entry - stopDistance : entry + stopDistance;
